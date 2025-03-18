@@ -5,4 +5,4 @@ CREATE TABLE clients (
     nom TEXT NOT NULL,
     prenom TEXT NOT NULL,
     adresse TEXT NOT NULL
-);
+); 
