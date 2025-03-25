@@ -63,6 +63,24 @@ def enregistrer_client():
     conn.close()
     return redirect('/consultation/')
 
+@app.route('/gestion_utilisateurs')
+def gestion_utilisateurs():
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM clients;')
+    utilisateurs = cursor.fetchall()
+    conn.close()
+    return render_template('gestion_utilisateurs.html', utilisateurs=utilisateurs)
+
+@app.route('/supprimer_utilisateur/<int:id>', methods=['POST'])
+def supprimer_utilisateur(id):
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+    cursor.execute('DELETE FROM clients WHERE id = ?', (id,))
+    conn.commit()
+    conn.close()
+    return redirect('/gestion_utilisateurs')
+
 @app.route('/consultation_livres')
 def consultation_livres():
     conn = sqlite3.connect('bibliotheque.db')
@@ -93,41 +111,6 @@ def supprimer_livre(id):
     conn = sqlite3.connect('bibliotheque.db')
     cursor = conn.cursor()
     cursor.execute('DELETE FROM livres WHERE id = ?', (id,))
-    conn.commit()
-    conn.close()
-    return redirect('/consultation_livres')
-
-@app.route('/recherche_livres')
-def recherche_livres():
-    query = request.args.get('query', '')
-    conn = sqlite3.connect('bibliotheque.db')
-    cursor = conn.cursor()
-    cursor.execute('SELECT * FROM livres WHERE disponible = "oui" AND titre LIKE ?', ('%' + query + '%',))
-    livres = cursor.fetchall()
-    conn.close()
-    return render_template('liste_livres.html', livres=livres)
-
-@app.route('/emprunter_livre', methods=['POST'])
-def emprunter_livre():
-    client_id = request.form['client_id']
-    livre_id = request.form['livre_id']
-
-    conn = sqlite3.connect('bibliotheque.db')
-    cursor = conn.cursor()
-    cursor.execute('INSERT INTO emprunts (client_id, livre_id) VALUES (?, ?)', (client_id, livre_id))
-    cursor.execute('UPDATE livres SET disponible = "non" WHERE id = ?', (livre_id,))
-    conn.commit()
-    conn.close()
-    return redirect('/consultation_livres')
-
-@app.route('/retourner_livre', methods=['POST'])
-def retourner_livre():
-    livre_id = request.form['livre_id']
-
-    conn = sqlite3.connect('bibliotheque.db')
-    cursor = conn.cursor()
-    cursor.execute('UPDATE emprunts SET date_retour = CURRENT_TIMESTAMP WHERE livre_id = ? AND date_retour IS NULL', (livre_id,))
-    cursor.execute('UPDATE livres SET disponible = "oui" WHERE id = ?', (livre_id,))
     conn.commit()
     conn.close()
     return redirect('/consultation_livres')
