@@ -61,8 +61,22 @@ def gestion_utilisateurs():
 
     cursor.execute('SELECT * FROM clients;')
     utilisateurs = cursor.fetchall()
+
+    conn_bib = sqlite3.connect('bibliotheque.db')
+    cursor_bib = conn_bib.cursor()
+
+    utilisateurs_avec_livres = []
+    for utilisateur in utilisateurs:
+        cursor_bib.execute('''SELECT livres.titre FROM emprunts
+                            JOIN livres ON emprunts.livre_id = livres.id
+                            WHERE emprunts.client_id = ? AND emprunts.date_retour IS NULL''', (utilisateur[0],))
+        livres_empruntes = cursor_bib.fetchall()
+        utilisateurs_avec_livres.append((utilisateur, livres_empruntes))
+
     conn.close()
-    return render_template('gestion_utilisateurs.html', utilisateurs=utilisateurs)
+    conn_bib.close()
+
+    return render_template('gestion_utilisateurs.html', utilisateurs_avec_livres=utilisateurs_avec_livres)
 
 @app.route('/supprimer_utilisateur/<int:id>', methods=['POST'])
 def supprimer_utilisateur(id):
@@ -97,33 +111,6 @@ def ajouter_livre():
         conn.close()
         return redirect('/consultation_livres')
     return render_template('formulaire_livre.html')
-
-
-@app.route('/emprunter_livre', methods=['POST'])
-def emprunter_livre():
-    client_id = request.form['client_id']
-    livre_id = request.form['livre_id']
-
-    conn = sqlite3.connect('bibliotheque.db')
-    cursor = conn.cursor()
-    cursor.execute('INSERT INTO emprunts (client_id, livre_id) VALUES (?, ?)', (client_id, livre_id))
-    cursor.execute('UPDATE livres SET disponible = "non" WHERE id = ?', (livre_id,))
-    conn.commit()
-    conn.close()
-    return redirect('/consultation_livres')
-
-@app.route('/retourner_livre', methods=['POST'])
-def retourner_livre():
-    livre_id = request.form['livre_id']
-
-    conn = sqlite3.connect('bibliotheque.db')
-    cursor = conn.cursor()
-    cursor.execute('UPDATE emprunts SET date_retour = CURRENT_TIMESTAMP WHERE livre_id = ? AND date_retour IS NULL', (livre_id,))
-    cursor.execute('UPDATE livres SET disponible = "oui" WHERE id = ?', (livre_id,))
-    conn.commit()
-    conn.close()
-    return redirect('/consultation_livres')
-
 
 @app.route('/supprimer_livre/<int:id>', methods=['POST'])
 def supprimer_livre(id):
