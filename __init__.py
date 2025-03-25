@@ -46,27 +46,19 @@ def ReadBDD():
     conn.close()
     return render_template('read_data.html', data=data)
 
-@app.route('/enregistrer_client', methods=['GET'])
-def formulaire_client():
-    return render_template('formulaire.html')
-
-@app.route('/enregistrer_client', methods=['POST'])
-def enregistrer_client():
-    nom = request.form['nom']
-    prenom = request.form['prenom']
-    adresse = request.form.get('adresse', 'Adresse non renseignée')
-
-    conn = sqlite3.connect('database.db')
-    cursor = conn.cursor()
-    cursor.execute('INSERT INTO clients (nom, prenom, adresse) VALUES (?, ?, ?)', (nom, prenom, adresse))
-    conn.commit()
-    conn.close()
-    return redirect('/consultation/')
-
-@app.route('/gestion_utilisateurs')
+@app.route('/gestion_utilisateurs', methods=['GET', 'POST'])
 def gestion_utilisateurs():
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
+
+    if request.method == 'POST':
+        nom = request.form['nom']
+        prenom = request.form['prenom']
+        adresse = request.form['adresse']
+
+        cursor.execute('INSERT INTO clients (nom, prenom, adresse) VALUES (?, ?, ?)', (nom, prenom, adresse))
+        conn.commit()
+
     cursor.execute('SELECT * FROM clients;')
     utilisateurs = cursor.fetchall()
     conn.close()
