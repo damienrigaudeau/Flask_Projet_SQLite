@@ -78,6 +78,21 @@ def gestion_utilisateurs():
 
     return render_template('gestion_utilisateurs.html', utilisateurs_avec_livres=utilisateurs_avec_livres)
 
+@app.route('/recherche_livres', methods=['GET', 'POST'])
+def recherche_livres():
+    conn = sqlite3.connect('bibliotheque.db')
+    cursor = conn.cursor()
+
+    if request.method == 'POST':
+        recherche = request.form['recherche']
+        cursor.execute('SELECT * FROM livres WHERE disponible = "oui" AND titre LIKE ?', ('%' + recherche + '%',))
+    else:
+        cursor.execute('SELECT * FROM livres WHERE disponible = "oui"')
+
+    livres = cursor.fetchall()
+    conn.close()
+    return render_template('recherche_livres.html', livres=livres)
+
 @app.route('/supprimer_utilisateur/<int:id>', methods=['POST'])
 def supprimer_utilisateur(id):
     conn = sqlite3.connect('database.db')
