@@ -8,15 +8,16 @@
 </head>
 <body>
     <h2>Authentification</h2>
-    {% if error %}
-        <p style="color: red;">Identifiant ou mot de passe incorrect.</p>
-    {% endif %}
+    
     <form action="{{ url_for('authentification') }}" method="post">
         <label for="username">Nom d'utilisateur:</label><br>
         <input type="text" id="username" name="username"><br>
         <label for="password">Mot de passe:</label><br>
         <input type="password" id="password" name="password"><br><br>
         <input type="submit" value="Se connecter">
+            {% if error %}
+        <p style="color: red;">Identifiant ou mot de passe incorrect.</p>
+            {% endif %}
     </form>
 </body>
 </html>
