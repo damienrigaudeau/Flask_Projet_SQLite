@@ -16,12 +16,12 @@ body {
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
     width: 350px;
     box-sizing: border-box;
-    text-align: center;
 }
 
 h2 {
     color: #557A95;
     margin-bottom: 25px;
+    text-align: center; /* ✅ Corrige ton problème, place le titre au centre en haut */
 }
 
 form {
