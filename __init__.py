@@ -55,6 +55,9 @@ def ReadBDD():
 
 @app.route('/gestion_utilisateurs', methods=['GET', 'POST'])
 def gestion_utilisateurs():
+    if not est_authentifie():
+        return redirect(url_for('authentification'))
+
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
 
@@ -102,6 +105,8 @@ def recherche_livres():
 
 @app.route('/supprimer_utilisateur/<int:id>', methods=['POST'])
 def supprimer_utilisateur(id):
+    if not est_authentifie():
+        return redirect(url_for('authentification'))
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
     cursor.execute('DELETE FROM clients WHERE id = ?', (id,))
@@ -130,7 +135,7 @@ def emprunter_livre():
     cursor.execute('UPDATE livres SET disponible = "non" WHERE id = ?', (livre_id,))
     conn.commit()
     conn.close()
-    return redirect('/consultation_livres')
+    return redirect('/recherche_livres')
 
 @app.route('/retourner_livre', methods=['POST'])
 def retourner_livre():
@@ -147,6 +152,8 @@ def retourner_livre():
 
 @app.route('/ajouter_livre', methods=['GET', 'POST'])
 def ajouter_livre():
+    if not est_authentifie():
+        return redirect(url_for('authentification'))
     if request.method == 'POST':
         titre = request.form['titre']
         auteur = request.form['auteur']
@@ -163,6 +170,8 @@ def ajouter_livre():
 
 @app.route('/supprimer_livre/<int:id>', methods=['POST'])
 def supprimer_livre(id):
+    if not est_authentifie():
+        return redirect(url_for('authentification'))
     conn = sqlite3.connect('bibliotheque.db')
     cursor = conn.cursor()
     cursor.execute('DELETE FROM livres WHERE id = ?', (id,))
