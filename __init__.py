@@ -12,18 +12,25 @@ def est_authentifie():
 def hello_world():
     return render_template('hello.html')
 
+@app.route('/administration')
+def administration():
+    if not est_authentifie():
+        return redirect(url_for('authentification'))
+    return render_template('administration.html')
+
+
 @app.route('/lecture')
 def lecture():
     if not est_authentifie():
         return redirect(url_for('authentification'))
-    return "<h2>Bravo, vous êtes authentifié</h2>"
+    return redirect(url_for('administration'))
 
 @app.route('/authentification', methods=['GET', 'POST'])
 def authentification():
     if request.method == 'POST':
         if request.form['username'] == 'admin' and request.form['password'] == 'password':
             session['authentifie'] = True
-            return redirect(url_for('lecture'))
+            return redirect(url_for('administration'))
         else:
             return render_template('formulaire_authentification.html', error=True)
     return render_template('formulaire_authentification.html', error=False)
