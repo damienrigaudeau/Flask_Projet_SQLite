@@ -3,11 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>Accueil Bibliothèque</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h2>Bienvenue à la bibliothèque</h2>
-    <p>Choisissez votre profil :</p>
-    <a href="{{ url_for('authentification') }}"><button>Administrateur</button></a>
-    <a href="{{ url_for('recherche_livres') }}"><button>Client</button></a>
+    <div class="container">
+        <h2>Bienvenue dans la bibliothèque de Damien RIGAUDEAU 📚</h2>
+        <p>Choisissez votre profil :</p>
+        <a href="{{ url_for('authentification') }}"><button>Administrateur</button></a>
+        <a href="{{ url_for('recherche_livres') }}"><button>Client</button></a>
+    </div>
 </body>
 </html>
