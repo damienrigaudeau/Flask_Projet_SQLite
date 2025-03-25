@@ -96,6 +96,33 @@ def consultation_livres():
     conn.close()
     return render_template('liste_livres.html', livres=livres)
 
+
+@app.route('/emprunter_livre', methods=['POST'])
+def emprunter_livre():
+    client_id = request.form['client_id']
+    livre_id = request.form['livre_id']
+
+    conn = sqlite3.connect('bibliotheque.db')
+    cursor = conn.cursor()
+    cursor.execute('INSERT INTO emprunts (client_id, livre_id) VALUES (?, ?)', (client_id, livre_id))
+    cursor.execute('UPDATE livres SET disponible = "non" WHERE id = ?', (livre_id,))
+    conn.commit()
+    conn.close()
+    return redirect('/consultation_livres')
+
+@app.route('/retourner_livre', methods=['POST'])
+def retourner_livre():
+    livre_id = request.form['livre_id']
+
+    conn = sqlite3.connect('bibliotheque.db')
+    cursor = conn.cursor()
+    cursor.execute('UPDATE emprunts SET date_retour = CURRENT_TIMESTAMP WHERE livre_id = ? AND date_retour IS NULL', (livre_id,))
+    cursor.execute('UPDATE livres SET disponible = "oui" WHERE id = ?', (livre_id,))
+    conn.commit()
+    conn.close()
+    return redirect('/consultation_livres')
+
+
 @app.route('/ajouter_livre', methods=['GET', 'POST'])
 def ajouter_livre():
     if request.method == 'POST':
