@@ -64,3 +64,11 @@ input[type="submit"]:hover {
     margin-bottom: 15px;
     text-align: center;
 }
+
+.titre {
+    text-align: center; /* centrer le texte */
+    margin-bottom: 20px; /* espacement avec le formulaire */
+    font-size: 24px; /* taille agréable */
+    color: #557A95; /* couleur harmonieuse */
+}
+
