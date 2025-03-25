@@ -1,3 +1,13 @@
-<!doctype html>
-<title>Flask Server</title>
-<h1> Hello from Flask Server !</h1>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Accueil Bibliothèque</title>
+</head>
+<body>
+    <h2>Bienvenue à la bibliothèque</h2>
+    <p>Choisissez votre profil :</p>
+    <a href="{{ url_for('authentification') }}"><button>Administrateur</button></a>
+    <a href="{{ url_for('recherche_livres') }}"><button>Client</button></a>
+</body>
+</html>
